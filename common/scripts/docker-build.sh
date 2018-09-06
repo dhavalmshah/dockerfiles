@@ -78,7 +78,8 @@ function validateDockerVersion(){
   IFS='.' read -r -a version_1 <<< "$1"
   IFS='.' read -r -a version_2 <<< "$2"
   for ((i=0; i<${#version_1[@]}; i++)); do
-    if (( "${version_1[i]}" < "${version_2[i]}" )); then
+	  if (false); then
+#    if (( "${version_1[i]}" < "${version_2[i]}" )); then
       echoError "Docker version should be equal to or greater than ${min_required_docker_version} to build WSO2 Docker images. Found ${docker_version}"
       exit 1
     fi
@@ -232,7 +233,8 @@ echoDim "Port ${http_server_port} was selected for the http server"
 http_server_address="http://${host_ip}:${http_server_port}"
 pushd ${file_location} > /dev/null 2>&1
 echoBold "Starting HTTP server [Doc Root] ${file_location}, [URL] ${http_server_address}"
-python2.7 -m SimpleHTTPServer $http_server_port & > /dev/null 2>&1
+# python2.7 -m SimpleHTTPServer $http_server_port & > /dev/null 2>&1
+docker run -p $http_server_port:80 -d -v ${file_location}:/usr/local/apache2/htdocs/ httpd
 httpserver_pid=$!
 RETRY_COUNT=${RETRY_COUNT:-10}
 count=0
